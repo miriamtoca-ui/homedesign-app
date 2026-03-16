@@ -1,21 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useMemo, useRef, useState } from "react";
+import { useActionState, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Modal } from "@/components/ui/modal";
+import type { ClientWithRelations, ProjectRecord } from "@/lib/supabase";
 
 import { createClientAction } from "./actions";
-
-type ClientItem = {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  address?: string;
-};
 
 type ActionState = {
   error?: string;
@@ -24,26 +17,29 @@ type ActionState = {
 
 const initialState: ActionState = {};
 
-export function ClientsDashboard({ initialClients }: { initialClients: ClientItem[] }) {
+export function ClientsDashboard({
+  initialClients,
+  allProjects,
+}: {
+  initialClients: ClientWithRelations[];
+  allProjects: ProjectRecord[];
+}) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [state, formAction, pending] = useActionState(createClientAction, initialState);
   const formRef = useRef<HTMLFormElement>(null);
 
-  useEffect(() => {
-    if (state.success) {
-      formRef.current?.reset();
-    }
-  }, [state.success]);
 
   const filteredClients = useMemo(() => {
     const term = search.toLowerCase();
     return initialClients.filter(
       (client) =>
         client.name.toLowerCase().includes(term) ||
-        client.email.toLowerCase().includes(term) ||
+        (client.email ?? "").toLowerCase().includes(term) ||
         (client.phone ?? "").toLowerCase().includes(term) ||
-        (client.address ?? "").toLowerCase().includes(term),
+        `${client.street ?? ""} ${client.city ?? ""} ${client.postal_code ?? ""} ${client.country ?? ""}`
+          .toLowerCase()
+          .includes(term),
     );
   }, [initialClients, search]);
 
@@ -73,7 +69,9 @@ export function ClientsDashboard({ initialClients }: { initialClients: ClientIte
               <h3 className="font-[Georgia,serif] text-2xl font-medium text-[#2c241d]">{client.name}</h3>
               <p className="mt-3 text-sm text-[#73685d]">✉ {client.email || "Sin email"}</p>
               <p className="mt-1 text-sm text-[#73685d]">☎ {client.phone || "Sin teléfono"}</p>
-              <p className="mt-1 text-sm text-[#73685d]">⌖ {client.address || "Sin dirección"}</p>
+              <p className="mt-1 text-sm text-[#73685d]">
+                ⌖ {client.street || ""} {client.city || ""} {client.postal_code || ""} {client.country || ""}
+              </p>
             </Card>
           </Link>
         ))}
@@ -90,8 +88,27 @@ export function ClientsDashboard({ initialClients }: { initialClients: ClientIte
           <FormField label="Nombre *" name="name" required />
           <FormField label="Email" name="email" type="email" />
           <FormField label="Teléfono" name="phone" />
-          <FormField label="Dirección" name="address" />
-          <FormField label="Notas" name="notes" textarea />
+          <FormField label="Calle" name="street" />
+          <div className="grid gap-4 md:grid-cols-2">
+            <FormField label="Ciudad" name="city" />
+            <FormField label="Código postal" name="postal_code" />
+          </div>
+          <FormField label="País" name="country" />
+
+          <label className="block text-sm text-[#73685d]">
+            <span className="mb-2 block">Proyectos asociados</span>
+            <select
+              name="project_ids"
+              multiple
+              className="w-full text-sm rounded-lg border border-[#e7e1d8] bg-white px-4 py-2 placeholder:text-[#8a7d70] focus:border-[#6b8fa3] focus:outline-none"
+            >
+              {allProjects.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.name}
+                </option>
+              ))}
+            </select>
+          </label>
 
           {state.error ? <p className="text-sm text-red-700">{state.error}</p> : null}
 
@@ -109,31 +126,21 @@ function FormField({
   name,
   required,
   type = "text",
-  textarea,
 }: {
   label: string;
   name: string;
   required?: boolean;
   type?: string;
-  textarea?: boolean;
 }) {
   return (
     <label className="block text-sm text-[#73685d]">
       <span className="mb-2 block">{label}</span>
-      {textarea ? (
-        <textarea
-          name={name}
-          rows={4}
-          className="w-full text-sm rounded-lg border border-[#e7e1d8] bg-white px-4 py-2 placeholder:text-[#8a7d70] focus:border-[#6b8fa3] focus:outline-none"
-        />
-      ) : (
-        <input
-          name={name}
-          type={type}
-          required={required}
-          className="w-full text-sm rounded-lg border border-[#e7e1d8] bg-white px-4 py-2 placeholder:text-[#8a7d70] focus:border-[#6b8fa3] focus:outline-none"
-        />
-      )}
+      <input
+        name={name}
+        type={type}
+        required={required}
+        className="w-full text-sm rounded-lg border border-[#e7e1d8] bg-white px-4 py-2 placeholder:text-[#8a7d70] focus:border-[#6b8fa3] focus:outline-none"
+      />
     </label>
   );
 }
