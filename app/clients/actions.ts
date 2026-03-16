@@ -11,10 +11,10 @@ type ActionState = {
 
 export async function createClientAction(_: ActionState, formData: FormData): Promise<ActionState> {
   const name = formData.get("name")?.toString().trim();
-  const email = formData.get("email")?.toString().trim();
+  const email = formData.get("email")?.toString().trim() ?? "";
 
-  if (!name || !email) {
-    return { error: "Name and email are required." };
+  if (!name) {
+    return { error: "El nombre es obligatorio." };
   }
 
   const { error } = await createClient({ name, email });
@@ -24,5 +24,6 @@ export async function createClientAction(_: ActionState, formData: FormData): Pr
   }
 
   revalidatePath("/clients");
+  revalidatePath("/");
   return { success: true };
 }

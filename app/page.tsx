@@ -1,55 +1,39 @@
-import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { listClients } from "@/lib/supabase";
 
-export default function Home() {
+const statsMeta = [
+  { key: "clients", label: "Clientes", icon: "⍟" },
+  { key: "projects", label: "Proyectos", icon: "⌂" },
+  { key: "rooms", label: "Habitaciones", icon: "▢" },
+  { key: "budgets", label: "Presupuestos", icon: "$" },
+] as const;
 
-  const [clients, setClients] = useState<any[]>([])
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [phone, setPhone] = useState("")
+export default async function DashboardPage() {
+  const { data: clients } = await listClients();
 
-  async function loadClients() {
-    const { data } = await supabase
-      .from("clients")
-      .select("*")
-      .order("created_at", { ascending: false })
-
-    setClients(data || [])
-  }
-
-  async function createClient() {
-
-    await supabase.from("clients").insert([
-      {
-        name,
-        email,
-        phone
-      }
-    ])
-
-    setName("")
-    setEmail("")
-    setPhone("")
-
-    loadClients()
-  }
-
-  useEffect(() => {
-    loadClients()
-  }, [])
+  const stats: Record<(typeof statsMeta)[number]["key"], number> = {
+    clients: clients.length,
+    projects: 0,
+    rooms: 0,
+    budgets: 0,
+  };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6">
-      <div className="w-full max-w-xl rounded-lg border border-zinc-200 bg-white p-8 shadow-sm">
-        <h1 className="text-3xl font-bold text-zinc-900">Home Design App</h1>
-        <p className="mt-3 text-zinc-600">Manage your project clients from a dedicated page.</p>
+    <main>
+      <h1 className="font-[Georgia,serif] text-6xl font-semibold text-[#2a221b] md:text-7xl">Panel de Control</h1>
+      <p className="mt-2 text-4xl text-[#7f7368] md:text-5xl">Resumen general del estudio</p>
 
-        <Link
-          href="/clients"
-          className="mt-6 inline-flex rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-700"
-        >
-          Go to clients
-        </Link>
-      </div>
+      <section className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        {statsMeta.map((stat) => (
+          <Card key={stat.key}>
+            <div className="flex items-start justify-between text-[#72675c]">
+              <p className="text-4xl">{stat.label}</p>
+              <span className="text-3xl text-[#c8673b]">{stat.icon}</span>
+            </div>
+            <p className="mt-8 font-[Georgia,serif] text-6xl font-semibold text-[#231c16]">{stats[stat.key]}</p>
+          </Card>
+        ))}
+      </section>
     </main>
   );
 }
