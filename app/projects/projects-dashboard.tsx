@@ -1,26 +1,23 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Modal } from "@/components/ui/modal";
 
-type Project = {
-  id: string;
-  name: string;
-  description: string;
-  startDate: string;
-};
+import { projectCatalog, type ProjectDetail } from "./data";
 
-const initialProjects: Project[] = [
-  {
-    id: "1",
-    name: "Casa amarilla",
-    description: "Chalet en Mirasierra amarilla necesitada de reforma integral",
-    startDate: "28/3/2026",
-  },
-];
+type Project = Pick<ProjectDetail, "id" | "name" | "description" | "startDate" | "status">;
+
+const initialProjects: Project[] = projectCatalog.map((project) => ({
+  id: project.id,
+  name: project.name,
+  description: project.description,
+  startDate: project.startDate,
+  status: project.status,
+}));
 
 export function ProjectsDashboard() {
   const [projects, setProjects] = useState(initialProjects);
@@ -58,14 +55,16 @@ export function ProjectsDashboard() {
 
       <section className="mt-8 grid gap-4 lg:max-w-2xl">
         {filteredProjects.map((project) => (
-          <Card key={project.id}>
-            <div className="flex items-start justify-between gap-3">
-              <h3 className="font-[Georgia,serif] text-2xl font-medium text-[#2c241d]">{project.name}</h3>
-              <span className="rounded-full bg-[#cc7046] px-3 py-1 text-xs font-medium text-white">Activo</span>
-            </div>
-            <p className="mt-3 text-sm text-[#73685d]">{project.description}</p>
-            <p className="mt-3 text-sm text-[#73685d]">Inicio: {project.startDate}</p>
-          </Card>
+          <Link key={project.id} href={`/projects/${project.id}`} className="block rounded-2xl">
+            <Card>
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="font-[Georgia,serif] text-2xl font-medium text-[#2c241d]">{project.name}</h3>
+                <span className="rounded-full bg-[#cc7046] px-3 py-1 text-xs font-medium text-white">{project.status}</span>
+              </div>
+              <p className="mt-3 text-sm text-[#73685d]">{project.description}</p>
+              <p className="mt-3 text-sm text-[#73685d]">Inicio: {project.startDate}</p>
+            </Card>
+          </Link>
         ))}
       </section>
 
@@ -102,6 +101,7 @@ function ProjectForm({ onCreate }: { onCreate: (project: Project) => void }) {
           name,
           description,
           startDate,
+          status: "Activo",
         });
       }}
     >

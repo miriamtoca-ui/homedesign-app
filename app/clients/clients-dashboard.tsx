@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -67,12 +68,14 @@ export function ClientsDashboard({ initialClients }: { initialClients: ClientIte
 
       <section className="mt-8 grid gap-4 lg:grid-cols-2">
         {filteredClients.map((client) => (
-          <Card key={client.id}>
-            <h3 className="font-[Georgia,serif] text-2xl font-medium text-[#2c241d]">{client.name}</h3>
-            <p className="mt-3 text-sm text-[#73685d]">✉ {client.email || "Sin email"}</p>
-            <p className="mt-1 text-sm text-[#73685d]">☎ {client.phone || "Sin teléfono"}</p>
-            <p className="mt-1 text-sm text-[#73685d]">⌖ {client.address || "Sin dirección"}</p>
-          </Card>
+          <Link key={client.id} href={`/clients/${client.id}`} className="block rounded-2xl">
+            <Card>
+              <h3 className="font-[Georgia,serif] text-2xl font-medium text-[#2c241d]">{client.name}</h3>
+              <p className="mt-3 text-sm text-[#73685d]">✉ {client.email || "Sin email"}</p>
+              <p className="mt-1 text-sm text-[#73685d]">☎ {client.phone || "Sin teléfono"}</p>
+              <p className="mt-1 text-sm text-[#73685d]">⌖ {client.address || "Sin dirección"}</p>
+            </Card>
+          </Link>
         ))}
 
         {filteredClients.length === 0 ? (
