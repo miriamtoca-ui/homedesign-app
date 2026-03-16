@@ -1,7 +1,4 @@
-"use client"
-
-import { useEffect, useState } from "react"
-import { supabase } from "../lib/supabase"
+import Link from "next/link";
 
 export default function Home() {
 
@@ -41,50 +38,18 @@ export default function Home() {
   }, [])
 
   return (
-    <main style={{ padding: 40 }}>
+    <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6">
+      <div className="w-full max-w-xl rounded-lg border border-zinc-200 bg-white p-8 shadow-sm">
+        <h1 className="text-3xl font-bold text-zinc-900">Home Design App</h1>
+        <p className="mt-3 text-zinc-600">Manage your project clients from a dedicated page.</p>
 
-      <h1>Clientes</h1>
-
-      <h2>Nuevo cliente</h2>
-
-      <input
-        placeholder="Nombre"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-
-      <br/>
-
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-
-      <br/>
-
-      <input
-        placeholder="Teléfono"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-      />
-
-      <br/>
-
-      <button onClick={createClient}>
-        Crear cliente
-      </button>
-
-      <h2>Lista</h2>
-
-      <ul>
-        {clients.map((client) => (
-          <li key={client.id}>
-            {client.name} — {client.email}
-          </li>
-        ))}
-      </ul>
-
+        <Link
+          href="/clients"
+          className="mt-6 inline-flex rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-700"
+        >
+          Go to clients
+        </Link>
+      </div>
     </main>
-  )
+  );
 }
