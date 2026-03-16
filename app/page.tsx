@@ -20,17 +20,17 @@ export default async function DashboardPage() {
 
   return (
     <main>
-      <h1 className="font-[Georgia,serif] text-6xl font-semibold text-[#2a221b] md:text-7xl">Panel de Control</h1>
-      <p className="mt-2 text-4xl text-[#7f7368] md:text-5xl">Resumen general del estudio</p>
+      <h1 className="font-[Georgia,serif] text-4xl font-normal text-[#2a221b]">Panel de Control</h1>
+      <p className="mt-2 text-lg text-[#7f7368]">Resumen general del estudio</p>
 
       <section className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {statsMeta.map((stat) => (
           <Card key={stat.key}>
             <div className="flex items-start justify-between text-[#72675c]">
-              <p className="text-4xl">{stat.label}</p>
-              <span className="text-3xl text-[#c8673b]">{stat.icon}</span>
+              <p className="font-[Georgia,serif] text-2xl font-medium text-[#2c241d]">{stat.label}</p>
+              <span className="text-sm text-[#c8673b]">{stat.icon}</span>
             </div>
-            <p className="mt-8 font-[Georgia,serif] text-6xl font-semibold text-[#231c16]">{stats[stat.key]}</p>
+            <p className="mt-6 font-[Georgia,serif] text-2xl font-medium text-[#2c241d]">{stats[stat.key]}</p>
           </Card>
         ))}
       </section>

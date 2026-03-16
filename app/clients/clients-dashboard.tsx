@@ -50,8 +50,8 @@ export function ClientsDashboard({ initialClients }: { initialClients: ClientIte
     <div>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-[Georgia,serif] text-6xl font-semibold text-[#2a221b] md:text-7xl">Clientes</h1>
-          <p className="mt-2 text-4xl text-[#7f7368] md:text-5xl">Gestiona tus clientes</p>
+          <h1 className="font-[Georgia,serif] text-4xl font-normal text-[#2a221b]">Clientes</h1>
+          <p className="mt-2 text-lg text-[#7f7368]">Gestiona tus clientes</p>
         </div>
         <Button className="gap-3" onClick={() => setOpen(true)}>
           <span className="text-xl">＋</span> Nuevo Cliente
@@ -62,22 +62,22 @@ export function ClientsDashboard({ initialClients }: { initialClients: ClientIte
         value={search}
         onChange={(event) => setSearch(event.target.value)}
         placeholder="Buscar clientes..."
-        className="mt-8 w-full max-w-xl rounded-xl border border-[#ddd4ca] bg-[#f7f3ee] px-5 py-3 text-3xl text-[#594f45] placeholder:text-[#8a7d70] focus:border-[#c8673b] focus:outline-none"
+        className="mt-8 w-full max-w-xl text-sm rounded-lg border border-[#e7e1d8] bg-white px-4 py-2 placeholder:text-[#8a7d70] focus:border-[#6b8fa3] focus:outline-none"
       />
 
       <section className="mt-8 grid gap-4 lg:grid-cols-2">
         {filteredClients.map((client) => (
           <Card key={client.id}>
-            <h3 className="font-[Georgia,serif] text-5xl font-semibold text-[#2c241d]">{client.name}</h3>
-            <p className="mt-3 text-3xl text-[#73685d]">✉ {client.email || "Sin email"}</p>
-            <p className="mt-1 text-3xl text-[#73685d]">☎ {client.phone || "Sin teléfono"}</p>
-            <p className="mt-1 text-3xl text-[#73685d]">⌖ {client.address || "Sin dirección"}</p>
+            <h3 className="font-[Georgia,serif] text-2xl font-medium text-[#2c241d]">{client.name}</h3>
+            <p className="mt-3 text-sm text-[#73685d]">✉ {client.email || "Sin email"}</p>
+            <p className="mt-1 text-sm text-[#73685d]">☎ {client.phone || "Sin teléfono"}</p>
+            <p className="mt-1 text-sm text-[#73685d]">⌖ {client.address || "Sin dirección"}</p>
           </Card>
         ))}
 
         {filteredClients.length === 0 ? (
           <Card className="lg:col-span-2">
-            <p className="text-3xl text-[#75695d]">No hay clientes que coincidan con la búsqueda.</p>
+            <p className="text-sm text-[#73685d]">No hay clientes que coincidan con la búsqueda.</p>
           </Card>
         ) : null}
       </section>
@@ -90,7 +90,7 @@ export function ClientsDashboard({ initialClients }: { initialClients: ClientIte
           <FormField label="Dirección" name="address" />
           <FormField label="Notas" name="notes" textarea />
 
-          {state.error ? <p className="text-lg text-red-700">{state.error}</p> : null}
+          {state.error ? <p className="text-sm text-red-700">{state.error}</p> : null}
 
           <Button type="submit" disabled={pending} className="mt-2 w-full">
             {pending ? "Creando..." : "Crear Cliente"}
@@ -115,20 +115,20 @@ function FormField({
   textarea?: boolean;
 }) {
   return (
-    <label className="block text-3xl text-[#3f372f]">
+    <label className="block text-sm text-[#73685d]">
       <span className="mb-2 block">{label}</span>
       {textarea ? (
         <textarea
           name={name}
           rows={4}
-          className="w-full rounded-xl border border-[#ddd4ca] bg-[#f7f3ee] px-4 py-3 text-2xl focus:border-[#c8673b] focus:outline-none"
+          className="w-full text-sm rounded-lg border border-[#e7e1d8] bg-white px-4 py-2 placeholder:text-[#8a7d70] focus:border-[#6b8fa3] focus:outline-none"
         />
       ) : (
         <input
           name={name}
           type={type}
           required={required}
-          className="w-full rounded-xl border border-[#ddd4ca] bg-[#f7f3ee] px-4 py-3 text-2xl focus:border-[#c8673b] focus:outline-none"
+          className="w-full text-sm rounded-lg border border-[#e7e1d8] bg-white px-4 py-2 placeholder:text-[#8a7d70] focus:border-[#6b8fa3] focus:outline-none"
         />
       )}
     </label>

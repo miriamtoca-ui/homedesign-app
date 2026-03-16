@@ -41,8 +41,8 @@ export function ProjectsDashboard() {
     <main>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-[Georgia,serif] text-6xl font-semibold text-[#2a221b] md:text-7xl">Proyectos</h1>
-          <p className="mt-2 text-4xl text-[#7f7368] md:text-5xl">Gestiona tus proyectos de diseño</p>
+          <h1 className="font-[Georgia,serif] text-4xl font-normal text-[#2a221b]">Proyectos</h1>
+          <p className="mt-2 text-lg text-[#7f7368]">Gestiona tus proyectos de diseño</p>
         </div>
         <Button className="gap-3" onClick={() => setOpen(true)}>
           <span className="text-xl">＋</span> Nuevo Proyecto
@@ -53,18 +53,18 @@ export function ProjectsDashboard() {
         value={search}
         onChange={(event) => setSearch(event.target.value)}
         placeholder="Buscar proyectos..."
-        className="mt-8 w-full max-w-xl rounded-xl border border-[#ddd4ca] bg-[#f7f3ee] px-5 py-3 text-3xl text-[#594f45] placeholder:text-[#8a7d70] focus:border-[#c8673b] focus:outline-none"
+        className="mt-8 w-full max-w-xl text-sm rounded-lg border border-[#e7e1d8] bg-white px-4 py-2 placeholder:text-[#8a7d70] focus:border-[#6b8fa3] focus:outline-none"
       />
 
       <section className="mt-8 grid gap-4 lg:max-w-2xl">
         {filteredProjects.map((project) => (
           <Card key={project.id}>
             <div className="flex items-start justify-between gap-3">
-              <h3 className="font-[Georgia,serif] text-5xl font-semibold text-[#2c241d]">{project.name}</h3>
-              <span className="rounded-full bg-[#cc7046] px-4 py-1 text-xl font-semibold text-white">Activo</span>
+              <h3 className="font-[Georgia,serif] text-2xl font-medium text-[#2c241d]">{project.name}</h3>
+              <span className="rounded-full bg-[#cc7046] px-3 py-1 text-xs font-medium text-white">Activo</span>
             </div>
-            <p className="mt-3 text-3xl text-[#73685d]">{project.description}</p>
-            <p className="mt-3 text-3xl text-[#73685d]">Inicio: {project.startDate}</p>
+            <p className="mt-3 text-sm text-[#73685d]">{project.description}</p>
+            <p className="mt-3 text-sm text-[#73685d]">Inicio: {project.startDate}</p>
           </Card>
         ))}
       </section>
@@ -132,20 +132,20 @@ function FormField({
   textarea?: boolean;
 }) {
   return (
-    <label className="block text-3xl text-[#3f372f]">
+    <label className="block text-sm text-[#73685d]">
       <span className="mb-2 block">{label}</span>
       {textarea ? (
         <textarea
           name={name}
           rows={4}
-          className="w-full rounded-xl border border-[#ddd4ca] bg-[#f7f3ee] px-4 py-3 text-2xl focus:border-[#c8673b] focus:outline-none"
+          className="w-full text-sm rounded-lg border border-[#e7e1d8] bg-white px-4 py-2 placeholder:text-[#8a7d70] focus:border-[#6b8fa3] focus:outline-none"
         />
       ) : (
         <input
           name={name}
           type={type}
           required={required}
-          className="w-full rounded-xl border border-[#ddd4ca] bg-[#f7f3ee] px-4 py-3 text-2xl focus:border-[#c8673b] focus:outline-none"
+          className="w-full text-sm rounded-lg border border-[#e7e1d8] bg-white px-4 py-2 placeholder:text-[#8a7d70] focus:border-[#6b8fa3] focus:outline-none"
         />
       )}
     </label>

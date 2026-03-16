@@ -14,7 +14,7 @@ export function Sidebar() {
 
   return (
     <aside className="w-full border-r border-[#ddd4ca] bg-[#f3eee7] p-4 md:w-[310px] md:p-6">
-      <h1 className="mb-10 font-[Georgia,serif] text-5xl font-semibold text-[#211a13] md:text-4xl">Estudio Interior</h1>
+      <h1 className="mb-10 font-[Georgia,serif] text-4xl font-normal text-[#211a13]">Estudio Interior</h1>
       <p className="mb-4 text-sm uppercase tracking-[0.2em] text-[#7b6f61]">Menú</p>
       <nav className="space-y-2">
         {menuItems.map((item) => {
