@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Modal } from "@/components/ui/modal";
+import { SearchSelect } from "@/components/ui/search-select";
 import type { ClientRecord, ProjectWithRelations } from "@/lib/supabase";
 
 import {
@@ -25,12 +26,44 @@ const initialState: ActionState = {};
 const tabs = ["information", "clients", "rooms", "budget"] as const;
 type WorkspaceTab = (typeof tabs)[number];
 
+const COUNTRY_OPTIONS = ["España", "Portugal", "Francia"];
+const REGION_OPTIONS: Record<string, string[]> = {
+  España: ["Madrid", "Cataluña", "Andalucía", "Comunidad Valenciana"],
+  Portugal: ["Lisboa", "Norte", "Centro", "Algarve"],
+  Francia: ["Île-de-France", "Provence-Alpes-Côte d'Azur", "Nouvelle-Aquitaine"],
+};
+
+const CITY_OPTIONS: Record<string, string[]> = {
+  Madrid: ["Madrid", "Alcobendas", "Pozuelo de Alarcón"],
+  Cataluña: ["Barcelona", "Girona", "Tarragona"],
+  Andalucía: ["Sevilla", "Málaga", "Granada"],
+  "Comunidad Valenciana": ["Valencia", "Alicante", "Castellón"],
+  Lisboa: ["Lisboa", "Cascais", "Sintra"],
+  Norte: ["Porto", "Braga", "Guimarães"],
+  Centro: ["Coimbra", "Aveiro", "Leiria"],
+  Algarve: ["Faro", "Lagos", "Portimão"],
+  "Île-de-France": ["París", "Versailles", "Nanterre"],
+  "Provence-Alpes-Côte d'Azur": ["Marsella", "Niza", "Cannes"],
+  "Nouvelle-Aquitaine": ["Burdeos", "Limoges", "Poitiers"],
+};
+
+function listRegions(country: string) {
+  return REGION_OPTIONS[country] ?? [];
+}
+
+function listCities(region: string) {
+  return CITY_OPTIONS[region] ?? [];
+}
+
 export function ProjectDetail({ project, allClients }: { project: ProjectWithRelations; allClients: ClientRecord[] }) {
   const [activeTab, setActiveTab] = useState<WorkspaceTab>("information");
   const [editProjectOpen, setEditProjectOpen] = useState(false);
   const [manageClientsOpen, setManageClientsOpen] = useState(false);
   const [createClientOpen, setCreateClientOpen] = useState(false);
   const [addRoomOpen, setAddRoomOpen] = useState(false);
+  const [country, setCountry] = useState(project.country ?? "");
+  const [region, setRegion] = useState("");
+  const [city, setCity] = useState(project.city ?? "");
 
   const [editState, editFormAction, editPending] = useActionState(updateProjectAction, initialState);
   const [manageClientState, manageClientAction, manageClientPending] = useActionState(
@@ -45,6 +78,9 @@ export function ProjectDetail({ project, allClients }: { project: ProjectWithRel
   const [roomState, roomAction, roomPending] = useActionState(addRoomAction, initialState);
 
   const selectedClientIds = project.project_clients.map((relation) => relation.client_id);
+
+  const availableRegions = useMemo(() => listRegions(country), [country]);
+  const availableCities = useMemo(() => listCities(region), [region]);
 
   const budgetItemsByRoom = new Map<string, typeof project.budgets[number]["budget_items"]>();
   for (const budget of project.budgets) {
@@ -65,7 +101,16 @@ export function ProjectDetail({ project, allClients }: { project: ProjectWithRel
             {project.street || ""} {project.city || ""} {project.postal_code || ""} {project.country || ""}
           </p>
         </div>
-        <Button onClick={() => setEditProjectOpen(true)}>Editar proyecto</Button>
+        <Button
+          onClick={() => {
+            setCountry(project.country ?? "");
+            setCity(project.city ?? "");
+            setRegion("");
+            setEditProjectOpen(true);
+          }}
+        >
+          Editar proyecto
+        </Button>
       </section>
 
       <div className="flex flex-wrap gap-2">
@@ -87,7 +132,16 @@ export function ProjectDetail({ project, allClients }: { project: ProjectWithRel
         <Card>
           <div className="flex items-start justify-between gap-4">
             <h2 className="font-[Georgia,serif] text-2xl font-medium text-[#2c241d]">Información</h2>
-            <Button onClick={() => setEditProjectOpen(true)}>Editar</Button>
+            <Button
+              onClick={() => {
+                setCountry(project.country ?? "");
+                setCity(project.city ?? "");
+                setRegion("");
+                setEditProjectOpen(true);
+              }}
+            >
+              Editar
+            </Button>
           </div>
           <div className="mt-4 grid gap-2 text-sm text-[#73685d] md:grid-cols-2">
             <p>Nombre: {project.name}</p>
@@ -201,10 +255,48 @@ export function ProjectDetail({ project, allClients }: { project: ProjectWithRel
           <FormField label="Estado" name="status" defaultValue={project.status ?? "Activo"} />
           <FormField label="Calle" name="street" defaultValue={project.street ?? ""} />
           <div className="grid gap-4 md:grid-cols-2">
-            <FormField label="Ciudad" name="city" defaultValue={project.city ?? ""} />
+            <label className="block text-sm text-[#73685d]">
+              <span className="mb-2 block">Ciudad</span>
+              <SearchSelect
+                options={availableCities}
+                value={city}
+                onChange={setCity}
+                placeholder="Buscar ciudad..."
+                name="city"
+              />
+            </label>
             <FormField label="Código postal" name="postal_code" defaultValue={project.postal_code ?? ""} />
           </div>
-          <FormField label="País" name="country" defaultValue={project.country ?? ""} />
+
+          <label className="block text-sm text-[#73685d]">
+            <span className="mb-2 block">País</span>
+            <SearchSelect
+              options={COUNTRY_OPTIONS}
+              value={country}
+              onChange={(nextCountry) => {
+                setCountry(nextCountry);
+                setRegion("");
+                setCity("");
+              }}
+              placeholder="Buscar país..."
+              name="country"
+            />
+          </label>
+
+          <label className="block text-sm text-[#73685d]">
+            <span className="mb-2 block">Región</span>
+            <SearchSelect
+              options={availableRegions}
+              value={region}
+              onChange={(nextRegion) => {
+                setRegion(nextRegion);
+                setCity("");
+              }}
+              placeholder="Buscar región..."
+              name="region"
+            />
+          </label>
+
           <FormField label="Fecha inicio" name="start_date" type="date" defaultValue={project.start_date ?? ""} />
 
           {editState.error ? <p className="text-sm text-red-700">{editState.error}</p> : null}
